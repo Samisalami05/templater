@@ -7,9 +7,13 @@
 #include <linux/limits.h>
 #include <libgen.h>
 
+/* ------------------ Declarations of internal functions ------------------ */
+
 static void parse_arguments(int argc, char* argv[], char* path);
 static void create_folders(char* relative_path, char** folders);
 static void create_file(char* exe_path, char* relative_path, char* read_path, char* write_path);
+
+/* -------------------------- External functions -------------------------- */
 
 int main(int argc, char* argv[]) {
 	// Parse command-line arguments
@@ -35,14 +39,19 @@ int main(int argc, char* argv[]) {
 
     printf("path: %s\n", path);
 
+	// Create folders
     char* folders[] = {"src", "build", "libs", NULL};
     create_folders(path, folders);
+
+	// Create files
     create_file(exe_path, path, "template_files/t_Makefile", "Makefile");
 	create_file(exe_path, path, "template_files/t_.gitignore", ".gitignore");
 	create_file(exe_path, path, "template_files/t_main.c", "src/main.c");
 
     return 0;
 }
+
+/* -------------------------- Internal functions -------------------------- */
 
 static void parse_arguments(int argc, char* argv[], char* path) {
     char relative_path[PATH_MAX - 1];
@@ -62,6 +71,11 @@ static void parse_arguments(int argc, char* argv[], char* path) {
             exit(EXIT_FAILURE);
         }
     }
+
+	if (argc - optind > 0) {
+		fprintf(stderr, "Usage: %s [-d dirname]\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
 
     if (!path_changed) {
         snprintf(path, PATH_MAX, "%s", relative_path);

@@ -1,5 +1,5 @@
 CC := gcc
-NAME := main
+NAME := templater
 SOURCEDIR := src
 BUILDDIR := build
 
