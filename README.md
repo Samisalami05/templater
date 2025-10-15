@@ -1,7 +1,7 @@
 # templater
-A simple C project template generator made in c. By default the project files are generated in the directory its executed from.
+A simple C project template generator made in C. By default the project files are generated in the directory its executed from.
 
-**NOTE**: install.sh does not work at the moment.
+**NOTE**: `install.sh` does not work at the moment.
 
 ## Usage
 
