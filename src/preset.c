@@ -3,6 +3,7 @@
 #include <linux/limits.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
@@ -69,8 +70,9 @@ static uint8_t copy_dir_contents(char* dest, char* source) {
 }
 
 uint8_t print_presets(settings* s) {
+	const char *home = getenv("HOME");
 	char presets_path[PATH_MAX];
-	snprintf(presets_path, PATH_MAX, "%s/presets", s->exec_path);
+	snprintf(presets_path, PATH_MAX, "%s/.local/share/templater/presets", home);
 	DIR* dir = opendir(presets_path);
 	if (!dir) {
 		perror("opendir");
@@ -91,8 +93,9 @@ uint8_t print_presets(settings* s) {
 }
 
 uint8_t load_preset(settings* s) {
+	const char *home = getenv("HOME");
 	char preset_path[PATH_MAX];
-	snprintf(preset_path, PATH_MAX, "%s/presets/%s", s->exec_path, s->preset);
+	snprintf(preset_path, PATH_MAX, "%s/.local/share/templater/presets/%s", home, s->preset);
 
 	DIR* dir = opendir(preset_path);
 	if (!dir) {
