@@ -11,14 +11,9 @@
 
 int main(int argc, char* argv[]) {
 	settings s;
-	parse_settings(&s, argc, argv);
+	if (parse_settings(&s, argc, argv)) return 1;
 
-    // Create directory if it does not exist
-    if (access(s.path, F_OK) != 0) {
-        mkdir(s.path, 0777);
-    }
-
-	printf("\nSelected preset: %s\n", s.preset);
+	printf("\nSelected preset: %s\n", s.preset.name);
     printf("Path: %s\n", s.path);
 
 	printf("\n:: Proceed with project creation? [Y/n]");
@@ -28,7 +23,12 @@ int main(int argc, char* argv[]) {
 
 	if (choice != 'y' && choice != 'Y' && choice != '\n') return 0;
 
-	if (load_preset(&s)) return 1;
+	// Create directory if it does not exist
+    if (access(s.path, F_OK) != 0) {
+        mkdir(s.path, 0777);
+    }
+
+	if (load_preset(s.preset, s.path)) return 1;
  
 	return 0;
 }
