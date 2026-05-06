@@ -18,7 +18,7 @@ TEST_APP_OBJS := $(filter-out $(MAIN_OBJ),$(OBJS))
 
 CFLAGS := -Wall -ggdb
 INCLUDES := -Isrc -Ilibs
-LDLIBS := -lm $(pkgconf --libs raylib)
+LDLIBS := -lm $(shell pkgconf --libs raylib)
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) -o $(NAME) $(LDLIBS)
