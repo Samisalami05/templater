@@ -1,4 +1,4 @@
 make
-sudo cp templater /usr/bin/
+sudo cp templater /usr/local/bin/
 mkdir -p ~/.local/share/templater
 cp -r presets/ ~/.local/share/templater/

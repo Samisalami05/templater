@@ -104,7 +104,7 @@ uint8_t print_presets() {
 	return 0;
 }
 
-uint8_t get_preset(preset* p, const char* name) {
+uint8_t get_preset(Preset* p, const char* name) {
 	char presets_path[PATH_MAX];
 	get_presets_path(presets_path);
 
@@ -134,7 +134,7 @@ uint8_t get_preset(preset* p, const char* name) {
 	return 0;
 }
 
-uint8_t load_preset(const preset p, const char* path) {
+uint8_t load_preset(Preset p, const char* path) {
 	if (copy_dir_contents(path, p.path)) {
 		fprintf(stderr, "failed to copy files\n");
 		return 1;

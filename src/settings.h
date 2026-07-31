@@ -7,10 +7,10 @@
 
 typedef struct {
 	char path[PATH_MAX];
-	preset preset;
-} settings;
+	Preset preset;
+} Settings;
 
-uint8_t parse_settings(settings* s, int argc, char* argv[]);
+uint8_t parse_settings(Settings* s, int argc, char* argv[]);
 
 
 #endif

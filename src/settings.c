@@ -13,11 +13,11 @@
 
 /* ------------------ Declarations of internal functions ------------------ */
 
-static uint8_t parse_arguments(settings* s, int argc, char* argv[]);
+static uint8_t parse_arguments(Settings* s, int argc, char* argv[]);
 
 /* -------------------------- Internal functions -------------------------- */
 
-static uint8_t parse_arguments(settings* s, int argc, char* argv[]) {
+static uint8_t parse_arguments(Settings* s, int argc, char* argv[]) {
     char relative_path[PATH_MAX];
 	getcwd(relative_path, PATH_MAX - 1);
 	strcpy(s->path, relative_path);
@@ -55,7 +55,7 @@ static uint8_t parse_arguments(settings* s, int argc, char* argv[]) {
 	return 0;
 }
 
-uint8_t parse_settings(settings* s, int argc, char* argv[]) {
+uint8_t parse_settings(Settings* s, int argc, char* argv[]) {
 	// Default settings
 	s->preset.name = DEFAULT_PRESET;
 

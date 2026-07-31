@@ -10,7 +10,7 @@
 #include <dirent.h>
 
 int main(int argc, char* argv[]) {
-	settings s;
+	Settings s = {0};
 	if (parse_settings(&s, argc, argv)) return 1;
 
 	printf("\nSelected preset: %s\n", s.preset.name);
@@ -18,8 +18,7 @@ int main(int argc, char* argv[]) {
 
 	printf("\n:: Proceed with project creation? [Y/n]");
 
-	char choice;
-	scanf("%c", &choice);
+	char choice = fgetc(stdin);
 
 	if (choice != 'y' && choice != 'Y' && choice != '\n') return 0;
 
