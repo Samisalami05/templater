@@ -1,0 +1,51 @@
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+    "-C",
+    "link-arg=-lc",
+	"-A",
+    "unsafe_op_in_unsafe_fn",
+    "-A",
+    "dead_code",
+    "-A",
+    "unused",
+]
+
+[target.aarch64-unknown-linux-gnu]
+rustflags = [
+    "-C",
+    "link-arg=-lc",
+	"-A",
+    "unsafe_op_in_unsafe_fn",
+    "-A",
+    "dead_code",
+    "-A",
+    "unused",
+]
+
+[target.x86_64-apple-darwin]
+rustflags = [
+    "-C",
+    "link-arg=-lSystem",
+	"-A",
+    "unsafe_op_in_unsafe_fn",
+    "-A",
+    "dead_code",
+    "-A",
+    "unused",
+]
+
+[target.aarch64-apple-darwin]
+rustflags = [
+    "-C",
+    "link-arg=-lSystem",
+	"-A",
+    "unsafe_op_in_unsafe_fn",
+    "-A",
+    "dead_code",
+    "-A",
+    "unused",
+]
+
+# Windows does not need libc linked this way.
+# The CRT is provided by the toolchain.
+

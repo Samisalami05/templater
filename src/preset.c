@@ -25,9 +25,10 @@ static uint8_t copy_file(const char* dest, const char* source) {
 	unsigned long size = ftell(source_fp);
 	fseek(source_fp, 0, SEEK_SET);
 
-	uint8_t data[size];
+	uint8_t* data = malloc(size);
 	fread(data, size, 1, source_fp);
 	fwrite(data, size, 1, dest_fp);
+	free(data);
 
 	fclose(source_fp);
 	fclose(dest_fp);
