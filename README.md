@@ -1,50 +1,29 @@
 # templater
-A simple C project template generator made in C. By default the project files are generated in the directory its executed from.
+A simple project template generator made in C. By default the
+project files are generated in the directory its executed from.
 
-**NOTE**: `install.sh` does not work at the moment.
+## Presets
+When generating a project template, you need to specify which
+preset to use.
 
-## Usage
+### Available presets
 
-Usage: templater [-d dirname]
-
-### Flags
-
-* **-d** - Generate the project files in a specified directory name
-
-## Template structure
-
-```
-build/
-libs/
-src/
-├─ main.c
-Makefile
-.gitignore
-```
-
-## Makefile
-
-The program generates a makefile for the program make that is used for compiling the project. The compiler used is gcc (GNU Compiler Collection).
+* standard
+* minimal
+* raylib
+* opengl-glfw
+* crust
 
 ## Install
 
 To install the program, follow these steps.
 
-* Clone the repositiory. (make sure you have git installed) \
+**NOTE:** Make sure you have git and make installed on your system.
+**NOTE:** The installation will require sudo access, if you only want
+to compile the program, run `make` instead of `make install`.
+
 ```bash
 git clone https://github.com/Samisalami05/templater.git
-```
-* Move into templater. \
-```bash
 cd templater
+make install
 ```
-* Compile templater. (make sure you have make installed) \
-```
-make
-```
-
-* Copy executable to clipboard. \
-```
-./install.sh
-```
-
