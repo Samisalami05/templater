@@ -11,6 +11,10 @@ libc = "0.2.172"
 panic = "abort"
 opt-level = "z"
 
+# These introduce rust_eh_personality linker errors so they should be false
+debug-assertions = false
+overflow-checks = false
+
 [profile.release]
 panic = "abort"
 opt-level = "z"
