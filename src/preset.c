@@ -1,11 +1,10 @@
 #include "preset.h"
-#include <dirent.h>
-#include <linux/limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
+#include "status.h"
+#include "program.h"
 
 static uint8_t copy_file(const char* dest, const char* source) {
 	FILE* source_fp = fopen(source, "rb");
@@ -36,71 +35,71 @@ static uint8_t copy_file(const char* dest, const char* source) {
 }
 
 static uint8_t copy_dir_contents(const char* dest, const char* source) {
-	DIR* dir = opendir(source);
-	if (!dir) {
-		perror("opendir");
-		return 1;
-	}
+	Dir dir = open_dir(source);
+	if (!dir) return 1;
 
-	struct dirent *entry;
-	while ((entry = readdir(dir)) != NULL) {
-		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+	char* entry = NULL;
+	while ((entry = read_dir(dir)) != NULL) {
+		if (strcmp(entry, ".") == 0 || strcmp(entry, "..") == 0)
 			continue;
 
 		char path[PATH_MAX];
-		snprintf(path, PATH_MAX, "%s/%s", source, entry->d_name);
+		snprintf(path, PATH_MAX, "%s/%s", source, entry);
 		
 		char destination[PATH_MAX];
-		snprintf(destination, PATH_MAX, "%s/%s", dest, entry->d_name);
+		snprintf(destination, PATH_MAX, "%s/%s", dest, entry);
 
-		struct stat info;
-		lstat(path, &info);
-		if ((info.st_mode & S_IFMT) == S_IFDIR) { // Check if it is a directory
-			printf("copying dir:  %s\n", entry->d_name);
-			mkdir(destination, 0777);
+		if (is_dir(path)) { // Check if it is a directory
+			printf("copying dir:  %s\n", entry);
+			create_dir(destination);
 			if (copy_dir_contents(destination, path)) return 1;
 		}
 		else {
-			printf("copying file: %s\n", entry->d_name);
+			printf("copying file: %s\n", entry);
 			if (copy_file(destination, path)) return 1;
 		}
 			
 	}
-	closedir(dir);
+	close_dir(dir);
 	return 0;
 }
 
-static uint8_t print_dir_contents(DIR* dir) {
-	struct dirent *entry;
-	while ((entry = readdir(dir)) != NULL) {
-		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+static uint8_t print_dir_contents(Dir dir) {
+	char* entry = NULL;
+	while ((entry = read_dir(dir)) != NULL) {
+		if (strcmp(entry, ".") == 0 || strcmp(entry, "..") == 0)
 			continue;
-		printf(" - %s\n", entry->d_name);		
+		printf(" - %s\n", entry);		
 	}
 
 	return 0;
 }
 
 static void get_presets_path(char path[PATH_MAX]) {
-	const char *home = getenv("HOME");
+#if defined (__linux__) || defined(__APPLE__)
+	const char* home = getenv("HOME");
 	snprintf(path, PATH_MAX, "%s/.local/share/templater/presets", home);
+#else
+	const char* local = getenv("LocalAppData");
+	snprintf(path, PATH_MAX, "%s/templater/presets", local);
+#endif
 }
 
 uint8_t print_presets() {
 	char presets_path[PATH_MAX];
 	get_presets_path(presets_path);
 
-	DIR* presets_dir = opendir(presets_path);
-	if (!presets_dir) {
-		perror("Could not open preset folder");
+	Dir dir = open_dir(presets_path);
+	if (!dir) {
+		error_print();
 		return 1;
 	}
 
 	printf("\nAvailable presets\n");
-	print_dir_contents(presets_dir);
+	print_dir_contents(dir);
 	printf("\n");
 
-	closedir(presets_dir);
+	close_dir(dir);
 
 	return 0;
 }
@@ -109,28 +108,27 @@ uint8_t get_preset(Preset* p, const char* name) {
 	char presets_path[PATH_MAX];
 	get_presets_path(presets_path);
 
-	DIR* presets_dir = opendir(presets_path);
-	if (!presets_dir) {
-		perror("Could not open preset folder");
+	if (!dir_exists(presets_path)) {
+		error_print();
+		fprintf(stderr, "Could not find the presets directory: '%s'\n", presets_path);
 		return 1;
 	}
 
 	snprintf(p->path, PATH_MAX, "%s/%s", presets_path, p->name);
 
-	DIR* dir = opendir(p->path); // TODO: Maybe store this in the preset struct
-	if (!dir) {
-		perror("Could not find the requested preset");
+	Dir preset_dir = open_dir(p->path); // TODO: Maybe store this in the preset struct
+	if (!preset_dir) {
+		error_print();
+		fprintf(stderr, "Could not find the requested preset: '%s'\n", p->name);
 
 		printf("\nAvailable presets\n");
-		print_dir_contents(presets_dir);
+		print_dir_contents(preset_dir);
 		printf("\n");
 
-		closedir(presets_dir);
 		return 1;
 	}
 
-	closedir(dir);
-	closedir(presets_dir);
+	close_dir(preset_dir);
 
 	return 0;
 }

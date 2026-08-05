@@ -1,13 +1,13 @@
 #include "settings.h"
 #include <getopt.h>
 #include <libgen.h>
-#include <linux/limits.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 #include "help.h"
 #include "arguments.h"
+#include "file.h"
 
 #define DEFAULT_PRESET "standard"
 

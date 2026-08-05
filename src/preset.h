@@ -1,8 +1,8 @@
 #ifndef PRESET_H
 #define PRESET_H
 
-#include <linux/limits.h>
 #include <stdint.h>
+#include "file.h"
 
 typedef struct {
 	char* name;

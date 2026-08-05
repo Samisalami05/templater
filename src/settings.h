@@ -2,7 +2,7 @@
 #define SETTINGS_H
 
 #include "preset.h"
-#include <linux/limits.h>
+#include "file.h"
 #include <stdint.h>
 
 typedef struct {

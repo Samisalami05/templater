@@ -3,38 +3,63 @@ NAME := templater
 SOURCEDIR := src
 BUILDDIR := build
 
-SRCS := $(shell find $(SOURCEDIR) -name '*.c')
+ifeq ($(OS),Windows_NT)
+	INSTALL_DIR := C:\msys64\ucrt64\bin
+	PRESETS_DIR := ${LOCALAPPDATA}\templater
+else
+	INSTALL_DIR := /usr/local/bin
+	PRESETS_DIR := ~/.local/share/templater
+endif
+
+SRCS := $(wildcard $(SOURCEDIR)/*.c)
 OBJS := $(patsubst $(SOURCEDIR)/%.c,$(BUILDDIR)/%.o,$(SRCS))
 
 CFLAGS := -Wall
 
-$(NAME): $(OBJS)
+ifeq ($(OS),Windows_NT)
+	MKDIR = powershell -NoProfile -Command "New-Item -ItemType Directory -Force -Path '$(1)' > $$null"
+else
+	MKDIR = mkdir -p "$(1)"
+endif
+
+$(NAME): builddir $(OBJS)
 	$(CC) $(OBJS) -o $(NAME)
 
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.c
-	@mkdir -p $(dir $@)
 	$(CC) -MMD -c $(CFLAGS) $< -o $@
 
-.PHONY: clean install uninstall
+builddir:
+	@$(call MKDIR,$(BUILDDIR))
 
-install: $(NAME)
-	sudo cp templater /usr/local/bin/
-	mkdir -p ~/.local/share/templater
-	cp -r presets/ ~/.local/share/templater
-	
-	@echo ""
-	@echo "Templater successfully installed at '/usr/local/bin'"
-
-uninstall:
-	sudo rm -f /usr/local/bin/templater
-	rm -rf ~/.local/share/templater
-
-	@echo ""
-	@echo "Templater successfully uninstalled from '/usr/local/bin'"
+.PHONY: clean install uninstall builddir
 
 clean:
 	rm -rf $(BUILDDIR)/*.d
 	rm -rf $(BUILDDIR)/*.o
 	rm $(NAME)
+
+install: $(NAME)
+ifeq ($(OS),Windows_NT)
+	powershell -NoProfile -Command "if (!(Test-Path $(INSTALL_DIR)\$(NAME).exe)) { Copy-Item .\$(NAME).exe $(INSTALL_DIR) }"
+	@$(call MKDIR,${LOCALAPPDATA}\templater)
+	powershell -NoProfile -Command "if (!(Test-Path ${LOCALAPPDATA}\templater\presets)) { Copy-Item -Recurse presets ${LOCALAPPDATA}\templater }"
+else
+	sudo cp $(NAME) $(INSTALL_DIR)/
+	mkdir -p $(PRESETS_DIR)
+	cp -r presets/ $(PRESETS_DIR)/
+endif
+	@echo ""
+	@echo "Templater successfully installed at '${INSTALL_DIR}'"
+
+uninstall:
+ifeq ($(OS),Windows_NT)
+	powershell -NoProfile -Command "if (Test-Path $(INSTALL_DIR)\$(NAME).exe) { Remove-Item -Force $(INSTALL_DIR)\$(NAME).exe }"
+	powershell -NoProfile -Command "if (Test-Path ${PRESETS_DIR}) { Remove-Item -Recurse ${PRESETS_DIR} }"
+else
+	sudo rm -f $(INSTALL_DIR)/$(NAME)
+	rm -rf $(PRESETS_DIR)
+endif
+	@echo ""
+	@echo "Templater successfully uninstalled from '${INSTALL_DIR}'"
 
 -include $(OBJS:.o=.d)
