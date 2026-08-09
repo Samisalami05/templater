@@ -5,6 +5,7 @@
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <linux/limits.h>
+#include <dirent.h>
 #else
 #include <windows.h>
 #endif
