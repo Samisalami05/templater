@@ -7,7 +7,6 @@
 
 
 int main(int argc, char* argv[]) {
-	
 	Settings s = {0};
 	if (parse_settings(&s, argc, argv)) return 1;
 

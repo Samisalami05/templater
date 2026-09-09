@@ -7,7 +7,7 @@ ifeq ($(OS),Windows_NT)
 	INSTALL_DIR := C:\msys64\ucrt64\bin
 	PRESETS_DIR := ${LOCALAPPDATA}\templater
 else
-	INSTALL_DIR := ~/.local/bin
+	INSTALL_DIR := /usr/local/bin
 	PRESETS_DIR := ~/.local/share/templater
 endif
 
@@ -44,8 +44,8 @@ ifeq ($(OS),Windows_NT)
 	@$(call MKDIR,${LOCALAPPDATA}\templater)
 	powershell -NoProfile -Command "if (!(Test-Path ${LOCALAPPDATA}\templater\presets)) { Copy-Item -Recurse presets ${LOCALAPPDATA}\templater }"
 else
-	mkdir -p $(INSTALL_DIR) $(PRESETS_DIR)
-	cp $(NAME) $(INSTALL_DIR)/
+	mkdir -p $(PRESETS_DIR)
+	sudo cp $(NAME) $(INSTALL_DIR)/
 	cp -r presets/ $(PRESETS_DIR)/
 endif
 	@echo ""
